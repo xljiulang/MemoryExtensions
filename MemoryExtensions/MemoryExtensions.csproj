@@ -1,13 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>System.Memory.Extensions</AssemblyName>
-    <RootNamespace>System.Buffers</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Version>1.0.0</Version>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>System.Memory.Extensions</AssemblyName>
+		<RootNamespace>System.Buffers</RootNamespace>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>MemoryExtensions</PackageId>
+		<Authors>xljiulang</Authors>
+		<Company>xljiulang</Company>
+		<Product>xljiulang</Product>
+		<Description>High performance buffer types such as ArrayPool,IArrayOwner&lt;T&gt;,BufferWriter&lt;T&gt;,and Slice extension for IMemoryOwner&lt;T&gt;</Description>
+		<PackageProjectUrl>https://github.com/xljiulang/MemoryExtensions</PackageProjectUrl>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Memory" Version="4.5.4" />
+	</ItemGroup>
 
 </Project>

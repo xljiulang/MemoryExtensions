@@ -1,5 +1,5 @@
 ## MemoryExtensions 　
-High performance buffer types as ArrayPool,IArrayOwner<T>,BufferWriter<T>,and Slice extension for IMemoryOwner<T>
+High performance buffer types such as ArrayPool,IArrayOwner<T>,BufferWriter<T>,and Slice extension for IMemoryOwner<T>
 
 ### ArrayPool
 
