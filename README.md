@@ -1,6 +1,8 @@
 ## MemoryExtensions 　
 High performance buffer types such as ArrayPool,IArrayOwner<T>,BufferWriter<T>,and Slice extension for IMemoryOwner<T>
-
+```
+<PackageReference Include="MemoryExtensions" Version="1.0.0" />
+```
 ### ArrayPool
 
 ```
@@ -29,9 +31,9 @@ writer.Dispose();
     
 ### IMemoryOwner Slice 
 ```
-var memory = MemoryPool<byte>.Shared.Rent(10);
-new byte[] { 1, 2, 3, 4 }.CopyTo(memory.Memory.Span);
-var sliced = memory.Slice(0, 2); // 1,2
+var owner = MemoryPool<byte>.Shared.Rent(10);
+new byte[] { 1, 2, 3, 4 }.CopyTo(owner.Memory.Span);
+var sliced = owner.Slice(0, 2); // 1,2
 
 // return the memory to pool
 sliced.Dispose();
