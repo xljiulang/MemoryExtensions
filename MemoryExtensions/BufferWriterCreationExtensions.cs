@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Buffers
@@ -48,47 +49,48 @@ namespace System.Buffers
         /// 数组缓冲区的BufferWriter
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        [DebuggerDisplay("WrittenCount = {index}")]
         private struct ArrayBufferWriter<T> : IBufferWriter<T>
         {
-            private int position;
+            private int index;
             private readonly T[] array;
             private readonly int length;
 
             public ArrayBufferWriter(T[] array)
             {
-                this.position = 0;
+                this.index = 0;
                 this.array = array;
                 this.length = array.Length;
             }
 
             public ArrayBufferWriter(ArraySegment<T> arraySegment)
             {
-                this.position = arraySegment.Offset;
+                this.index = arraySegment.Offset;
                 this.array = arraySegment.Array;
                 this.length = arraySegment.Count;
             }
 
             public void Advance(int count)
             {
-                this.position += count;
+                this.index += count;
             }
 
             public Memory<T> GetMemory(int sizeHint = 0)
             {
                 var size = this.GetSize(sizeHint);
-                return new Memory<T>(this.array, this.position, size);
+                return new Memory<T>(this.array, this.index, size);
             }
 
             public Span<T> GetSpan(int sizeHint = 0)
             {
                 var size = this.GetSize(sizeHint);
-                return new Span<T>(this.array, this.position, size);
+                return new Span<T>(this.array, this.index, size);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int GetSize(int sizeHint)
             {
-                var free = this.length - this.position;
+                var free = this.length - this.index;
                 if (sizeHint <= 0)
                 {
                     return free;

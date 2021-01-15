@@ -7,7 +7,7 @@ namespace MemoryExtensions.Benchmarks
     [MemoryDiagnoser]
     public class ArrayPoolBenchmark : IBenchmark
     {
-        [Params(1024, 1024 * 8, 1024 * 16)]
+        [Params(24, 1024, 1024 * 10)]
         public int Size { get; set; }
 
         [Benchmark]

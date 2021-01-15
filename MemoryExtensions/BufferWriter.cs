@@ -1,24 +1,32 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace System.Buffers
 {
     /// <summary>
     /// 表示字节缓冲区写入对象
     /// </summary>
+    [DebuggerDisplay("WrittenCount = {index}")]
     public sealed class BufferWriter<T> : Recyclable, IBufferWriter<T>
     {
+        private int index = 0;
+        private IArrayOwner<T> buffer;
         private const int defaultSizeHint = 256;
-        private IArrayOwner<T> byteArrayOwner;
 
         /// <summary>
         /// 获取已写入的字节数
         /// </summary>
-        public int WrittenCount { get; private set; }
+        public int WrittenCount => this.index;
 
         /// <summary>
         /// 获取容量
         /// </summary>
-        public int Capacity => this.byteArrayOwner.Array.Length;
+        public int Capacity => this.buffer.Array.Length;
+
+        /// <summary>
+        /// 获取剩余容量
+        /// </summary>
+        public int FreeCapacity => this.buffer.Array.Length - this.index;
 
 
         /// <summary>
@@ -32,7 +40,7 @@ namespace System.Buffers
             {
                 throw new ArgumentOutOfRangeException(nameof(initialCapacity));
             }
-            this.byteArrayOwner = ArrayPool.Rent<T>(initialCapacity);
+            this.buffer = ArrayPool.Rent<T>(initialCapacity);
         }
 
         /// <summary>
@@ -40,8 +48,8 @@ namespace System.Buffers
         /// </summary>
         public void Clear()
         {
-            this.byteArrayOwner.Array.AsSpan(0, this.WrittenCount).Clear();
-            this.WrittenCount = 0;
+            this.buffer.Array.AsSpan(0, this.index).Clear();
+            this.index = 0;
         }
 
         /// <summary>
@@ -51,11 +59,12 @@ namespace System.Buffers
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void Advance(int count)
         {
-            if (count < 0 || this.WrittenCount + count > this.Capacity)
+            if (count < 0 || this.index > this.buffer.Array.Length - count)
             {
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
-            this.WrittenCount += count;
+
+            this.index += count;
         }
 
         /// <summary>
@@ -67,7 +76,7 @@ namespace System.Buffers
         public Memory<T> GetMemory(int sizeHint = 0)
         {
             this.CheckAndResizeBuffer(sizeHint);
-            return this.byteArrayOwner.Array.AsMemory(this.WrittenCount);
+            return this.buffer.Array.AsMemory(this.index);
         }
 
         /// <summary>
@@ -79,7 +88,7 @@ namespace System.Buffers
         public Span<T> GetSpan(int sizeHint = 0)
         {
             this.CheckAndResizeBuffer(sizeHint);
-            return byteArrayOwner.Array.AsSpan(this.WrittenCount);
+            return buffer.Array.AsSpan(this.index);
         }
 
         /// <summary>
@@ -89,7 +98,7 @@ namespace System.Buffers
         public void Write(T value)
         {
             this.GetSpan(1)[0] = value;
-            this.WrittenCount += 1;
+            this.index += 1;
         }
 
         /// <summary>
@@ -101,7 +110,7 @@ namespace System.Buffers
             if (value.IsEmpty == false)
             {
                 value.CopyTo(this.GetSpan(value.Length));
-                this.WrittenCount += value.Length;
+                this.index += value.Length;
             }
         }
 
@@ -111,7 +120,7 @@ namespace System.Buffers
         /// <returns></returns>
         public ArraySegment<T> GetWrittenSegment()
         {
-            return new ArraySegment<T>(this.byteArrayOwner.Array, 0, this.WrittenCount);
+            return new ArraySegment<T>(this.buffer.Array, 0, this.index);
         }
 
         /// <summary>
@@ -119,7 +128,7 @@ namespace System.Buffers
         /// </summary>
         public ReadOnlySpan<T> GetWrittenSpan()
         {
-            return this.byteArrayOwner.Array.AsSpan(0, this.WrittenCount);
+            return this.buffer.Array.AsSpan(0, this.index);
         }
 
         /// <summary>
@@ -127,7 +136,7 @@ namespace System.Buffers
         /// </summary>
         public ReadOnlyMemory<T> GetWrittenMemory()
         {
-            return this.byteArrayOwner.Array.AsMemory(0, this.WrittenCount);
+            return this.buffer.Array.AsMemory(0, this.index);
         }
 
         /// <summary>
@@ -136,7 +145,7 @@ namespace System.Buffers
         /// <param name="disposing"></param>
         protected sealed override void Dispose(bool disposing)
         {
-            this.byteArrayOwner?.Dispose();
+            this.buffer?.Dispose();
         }
 
         /// <summary>
@@ -147,11 +156,6 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckAndResizeBuffer(int sizeHint)
         {
-            if (this.IsDisposed == true)
-            {
-                throw new ObjectDisposedException(this.GetType().Name);
-            }
-
             if (sizeHint < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(sizeHint));
@@ -162,16 +166,17 @@ namespace System.Buffers
                 sizeHint = defaultSizeHint;
             }
 
-            var freeCapacity = this.Capacity - this.WrittenCount;
-            if (sizeHint > freeCapacity)
+            if (sizeHint > this.FreeCapacity)
             {
-                var growBy = Math.Max(sizeHint, this.Capacity);
-                var newSize = checked(this.Capacity + growBy);
+                int currentLength = this.buffer.Array.Length;
+                var growBy = Math.Max(sizeHint, currentLength);
+                var newSize = checked(currentLength + growBy);
 
-                var newOwer = ArrayPool.Rent<T>(newSize);
-                this.GetWrittenSpan().CopyTo(newOwer.Array);
-                this.byteArrayOwner.Dispose();
-                this.byteArrayOwner = newOwer;
+                var newBuffer = ArrayPool.Rent<T>(newSize);
+                Array.Copy(this.buffer.Array, newBuffer.Array, this.index);
+
+                this.buffer.Dispose();
+                this.buffer = newBuffer;
             }
         }
     }
