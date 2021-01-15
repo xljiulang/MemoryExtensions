@@ -34,7 +34,7 @@ writer.Dispose();
 ```
 var array = new byte[16];
 
-var writer = array.CreateBufferWriter();
+var writer = array.CreateWriter();
 writer.WriteBigEndian(18);
 writer.WriteBigEndian(2.01f);
 
