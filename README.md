@@ -17,20 +17,30 @@ for (var i = 0; i < arrayOwner.Length; i++)
 arrayOwner.Dispose();
 ```
  
-### Recyclable BufferWriter
+### RecyclableBufferWriter
 
 ```
-var writer = new BufferWriter<byte>(4);
+var writer = new RecyclableBufferWriter<byte>(4);
 writer.Write((byte)1);
 writer.Write(new byte[] { 2, 3, 4 });
 writer.WriteBigEndian(int.MaxValue);           
-var writtern = writer.GetWrittenSpan(); // 1,2,3,4,127,255,255,255
+var writtern = writer.WrittenSpan; // 1,2,3,4,127,255,255,255
 
 // return the buffer to pool
 writer.Dispose();
 ``` 
 
-### BufferWriter & BufferReader
+### ResizableBufferWriter
+
+```
+var writer = new ResizableBufferWriter<byte>(4);
+writer.Write((byte)1);
+writer.Write(new byte[] { 2, 3, 4 });
+writer.WriteBigEndian(int.MaxValue);           
+var writtern = writer.WrittenSpan; // 1,2,3,4,127,255,255,255
+``` 
+
+### FixedBufferWriter & BufferReader
 ```
 var array = new byte[16];
 

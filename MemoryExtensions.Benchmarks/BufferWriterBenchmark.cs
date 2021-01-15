@@ -16,7 +16,7 @@ namespace MemoryExtensions.Benchmarks
         [Benchmark]
         public void RecyclableBufferWriter()
         {
-            using var writer = new BufferWriter<byte>(16);
+            using var writer = new RecyclableBufferWriter<byte>(16);
             var filed = new byte[FieldSize];
             for (var i = 0; i < Fields; i++)
             {
@@ -25,7 +25,7 @@ namespace MemoryExtensions.Benchmarks
         }
 
         [Benchmark]
-        public void FixedArrayBufferWriter()
+        public void FixedBufferWriter()
         {
             var writer = new byte[Fields * FieldSize].CreateWriter();
             var filed = new byte[FieldSize];
@@ -36,9 +36,9 @@ namespace MemoryExtensions.Benchmarks
         }
 
         [Benchmark]
-        public void ArrayBufferWriter()
+        public void ResizableBufferWriter()
         {
-            var writer = new ArrayBufferWriter<byte>(16);
+            var writer = new ResizableBufferWriter<byte>(16);
             var filed = new byte[FieldSize];
             for (var i = 0; i < Fields; i++)
             {
