@@ -37,7 +37,7 @@
         /// 表示内存持有者
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class MemoryOwner<T> : Disposable, IMemoryOwner<T>
+        private class MemoryOwner<T> : Recyclable, IMemoryOwner<T>
         {
             private readonly IDisposable owner;
 

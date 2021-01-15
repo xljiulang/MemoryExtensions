@@ -14,6 +14,6 @@
         /// <summary>
         /// 获取持有的数组
         /// </summary>
-        T[] Array { get; }
+        T[] Array { get; } 
     }
 }

@@ -1,17 +1,17 @@
 ﻿namespace System
 {
     /// <summary>
-    /// 表示支持Dispose的抽象基础类
+    /// 表示可回收对象的抽象基础类
     /// </summary>
-    public abstract class Disposable : IDisposable
+    public abstract class Recyclable : IDisposable
     {
         /// <summary>
-        /// 获取对象是否已释放
+        /// 获取对象是否已回收
         /// </summary>
-        public bool IsDisposed { get; private set; }
+        protected bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// 关闭和释放所有相关资源
+        /// 将对象进行回收
         /// </summary>
         public void Dispose()
         {
@@ -26,13 +26,13 @@
         /// <summary>
         /// 析构函数
         /// </summary>
-        ~Disposable()
+        ~Recyclable()
         {
             this.Dispose(false);
         }
 
         /// <summary>
-        /// 释放资源
+        /// 将对象进行回收
         /// </summary>
         /// <param name="disposing">是否也释放托管资源</param>
         protected abstract void Dispose(bool disposing);
