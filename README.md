@@ -1,5 +1,5 @@
 ## MemoryExtensions 　
-High performance buffer types such as IArrayOwner<T>,IMemoryOwner<T>,BufferWriter<T>,BufferReader<T>
+High performance buffer types such as IArrayOwner<T>,RecyclableBufferWriter<T>,ResizableBufferWriter<T>,FixedBufferWriter<T>,BufferReader<T>
 ```
 <PackageReference Include="MemoryExtensions" Version="1.0.1" />
 ```

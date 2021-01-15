@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<AssemblyName>System.Memory.Extensions</AssemblyName>
@@ -11,7 +11,7 @@
 		<Authors>xljiulang</Authors>
 		<Company>xljiulang</Company>
 		<Product>xljiulang</Product>
-		<Description>High performance buffer types such as IArrayOwner&lt;T&gt;,IMemoryOwner&lt;T&gt;,BufferWriter&lt;T&gt;,BufferReader&lt;T&gt;</Description>
+		<Description>High performance buffer types such as IArrayOwner&lt;T&gt;,RecyclableBufferWriter&lt;T&gt;,ResizableBufferWriter&lt;T&gt;,FixedBufferWriter&lt;T&gt;,BufferReader&lt;T&gt;</Description>
 		<PackageProjectUrl>https://github.com/xljiulang/MemoryExtensions</PackageProjectUrl>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
