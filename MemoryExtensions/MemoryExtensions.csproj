@@ -13,10 +13,7 @@
 		<Product>xljiulang</Product>
 		<Description>High performance buffer types such as ArrayPool,IArrayOwner&lt;T&gt;,BufferWriter&lt;T&gt;,and Slice extension for IMemoryOwner&lt;T&gt;</Description>
 		<PackageProjectUrl>https://github.com/xljiulang/MemoryExtensions</PackageProjectUrl>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -22,12 +22,25 @@ arrayOwner.Dispose();
 var writer = new BufferWriter<byte>(4);
 writer.Write((byte)1);
 writer.Write(new byte[] { 2, 3, 4 });
-writer.WriteInt32BigEndian(int.MaxValue);           
+writer.WriteBigEndian(int.MaxValue);           
 var writtern = writer.GetWrittenSpan(); // 1,2,3,4,127,255,255,255
 
 // return the buffer to pool
 writer.Dispose();
 ``` 
+
+### BufferReader
+```
+var array = new byte[16];
+
+var writer = array.CreateBufferWriter();
+writer.WriteBigEndian(18);
+writer.WriteBigEndian(2.01f);
+
+var reader = new BufferReader(array);
+reader.ReadBigEndian(out int v1);
+reader.ReadBigEndian(out float v2);
+```
     
 ### IMemoryOwner Slice 
 ```

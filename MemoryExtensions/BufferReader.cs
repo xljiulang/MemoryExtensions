@@ -1,16 +1,23 @@
 ﻿using System.Buffers.Binary;
+using System.Diagnostics;
 
 namespace System.Buffers
 {
     /// <summary>
     /// 表示Buffter读取器
     /// </summary>
+    [DebuggerDisplay("Length = {Length}")]
     public ref struct BufferReader
     {
         /// <summary>
-        /// 获取未读取的数据
+        /// 未读取的数据
         /// </summary>
-        public ReadOnlySpan<byte> Span { get; private set; }
+        private ReadOnlySpan<byte> span;
+
+        /// <summary>
+        /// 获取可读数据长度
+        /// </summary>
+        public int Length => this.span.Length;
 
         /// <summary>
         /// Buffter读取器
@@ -18,7 +25,7 @@ namespace System.Buffers
         /// <param name="span"></param>
         public BufferReader(ReadOnlySpan<byte> span)
         {
-            this.Span = span;
+            this.span = span;
         }
 
         /// <summary>
@@ -28,186 +35,173 @@ namespace System.Buffers
         /// <returns></returns>
         public ReadOnlySpan<byte> Read(int count)
         {
-            var value = this.Span.Slice(0, count);
-            this.Span = this.Span.Slice(count);
+            var value = this.span.Slice(0, count);
+            this.span = this.span.Slice(count);
             return value;
         }
 
         /// <summary>
         /// 读取int32
         /// </summary>
-        /// <returns></returns>
-        public int ReadInt32BigEndian()
+        /// <param name="value"></param>
+        public void ReadBigEndian(out int value)
         {
-            var value = BinaryPrimitives.ReadInt32BigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(int));
-            return value;
+            value = BinaryPrimitives.ReadInt32BigEndian(this.span);
+            this.span = this.span.Slice(sizeof(int));
         }
 
         /// <summary>
         /// 读取int32
         /// </summary>
-        /// <returns></returns>
-        public int ReadInt32LittleEndian()
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out int value)
         {
-            var value = BinaryPrimitives.ReadInt32LittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(int));
-            return value;
-        }
-
-
-        /// <summary>
-        /// 读取int16
-        /// </summary>
-        /// <returns></returns>
-        public short ReadInt16BigEndian()
-        {
-            var value = BinaryPrimitives.ReadInt16BigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(short));
-            return value;
+            value = BinaryPrimitives.ReadInt32LittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(int));
         }
 
         /// <summary>
         /// 读取int16
         /// </summary>
-        /// <returns></returns>
-        public short ReadInt16LittleEndian()
+        /// <param name="value"></param>
+        public void ReadBigEndian(out short value)
         {
-            var value = BinaryPrimitives.ReadInt16LittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(short));
-            return value;
+            value = BinaryPrimitives.ReadInt16BigEndian(this.span);
+            this.span = this.span.Slice(sizeof(short));
+        }
+
+        /// <summary>
+        /// 读取int16
+        /// </summary>
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out short value)
+        {
+            value = BinaryPrimitives.ReadInt16LittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(short));
         }
 
         /// <summary>
         /// 读取int64
         /// </summary>
-        /// <returns></returns>
-        public long ReadInt64BigEndian()
+        /// <param name="value"></param>
+        public void ReadBigEndian(out long value)
         {
-            var value = BinaryPrimitives.ReadInt64BigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(long));
-            return value;
+            value = BinaryPrimitives.ReadInt64BigEndian(this.span);
+            this.span = this.span.Slice(sizeof(long));
         }
 
         /// <summary>
         /// 读取int64
         /// </summary>
-        /// <returns></returns>
-        public long ReadInt64LittleEndian()
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out long value)
         {
-            var value = BinaryPrimitives.ReadInt64LittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(long));
-            return value;
+            value = BinaryPrimitives.ReadInt64LittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(long));
         }
-
 
 
         /// <summary>
         /// 读取uint32
         /// </summary>
-        /// <returns></returns>
-        public uint ReadUInt32BigEndian()
+        /// <param name="value"></param>
+        public void ReadBigEndian(out uint value)
         {
-            var value = BinaryPrimitives.ReadUInt32BigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(uint));
-            return value;
+            value = BinaryPrimitives.ReadUInt32BigEndian(this.span);
+            this.span = this.span.Slice(sizeof(uint));
         }
 
         /// <summary>
         /// 读取uint32
         /// </summary>
-        /// <returns></returns>
-        public uint ReadUInt32LittleEndian()
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out uint value)
         {
-            var value = BinaryPrimitives.ReadUInt32LittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(uint));
-            return value;
+            value = BinaryPrimitives.ReadUInt32LittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(uint));
         }
 
 
         /// <summary>
         /// 读取uint16
         /// </summary>
-        /// <returns></returns>
-        public ushort ReadUInt16BigEndian()
+        /// <param name="value"></param>
+        public void ReadBigEndian(out ushort value)
         {
-            var value = BinaryPrimitives.ReadUInt16BigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(ushort));
-            return value;
+            value = BinaryPrimitives.ReadUInt16BigEndian(this.span);
+            this.span = this.span.Slice(sizeof(ushort));
         }
+
 
         /// <summary>
         /// 读取uint16
         /// </summary>
-        /// <returns></returns>
-        public ushort ReadUInt16LittleEndian()
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out ushort value)
         {
-            var value = BinaryPrimitives.ReadUInt16LittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(ushort));
-            return value;
+            value = BinaryPrimitives.ReadUInt16LittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(ushort));
         }
 
         /// <summary>
         /// 读取uint64
         /// </summary>
-        /// <returns></returns>
-        public ulong ReadUInt64BigEndian()
+        /// <param name="value"></param>
+        public void ReadBigEndian(out ulong value)
         {
-            var value = BinaryPrimitives.ReadUInt64BigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(ulong));
-            return value;
+            value = BinaryPrimitives.ReadUInt64BigEndian(this.span);
+            this.span = this.span.Slice(sizeof(ulong));
         }
 
         /// <summary>
         /// 读取uint64
         /// </summary>
-        /// <returns></returns>
-        public ulong ReadUInt64LittleEndian()
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out ulong value)
         {
-            var value = BinaryPrimitives.ReadUInt64LittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(ulong));
-            return value;
+            value = BinaryPrimitives.ReadUInt64LittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(ulong));
         }
 
         /// <summary>
         /// 读取double
-        /// </summary> 
-        public double ReadDoubleLittleEndian()
+        /// </summary>
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out double value)
         {
-            var value = BinaryPrimitiveEx.ReadDoubleLittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(long));
-            return value;
+            value = BinaryPrimitiveEx.ReadDoubleLittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(long));
         }
 
         /// <summary>
         /// 读取double
-        /// </summary> 
-        public double ReadDoubleBigEndian()
+        /// </summary>
+        /// <param name="value"></param>
+        public void ReadBigEndian(out double value)
         {
-            var value = BinaryPrimitiveEx.ReadDoubleBigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(long));
-            return value;
+            value = BinaryPrimitiveEx.ReadDoubleBigEndian(this.span);
+            this.span = this.span.Slice(sizeof(long));
         }
 
         /// <summary>
         /// 读取float
         /// </summary>
-        /// <returns></returns>
-        public float ReadSingleLittleEndian()
+        /// <param name="value"></param>
+        public void ReadLittleEndian(out float value)
         {
-            var value = BinaryPrimitiveEx.ReadSingleLittleEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(int));
-            return value;
+            value = BinaryPrimitiveEx.ReadSingleLittleEndian(this.span);
+            this.span = this.span.Slice(sizeof(int));
         }
+
 
         /// <summary>
         /// 读取float
-        /// </summary> 
-        public float ReadSingleBigEndian()
+        /// </summary>
+        /// <param name="value"></param>
+        public void ReadBigEndian(out float value)
         {
-            var value = BinaryPrimitiveEx.ReadSingleBigEndian(this.Span);
-            this.Span = this.Span.Slice(sizeof(int));
-            return value;
+            value = BinaryPrimitiveEx.ReadSingleBigEndian(this.span);
+            this.span = this.span.Slice(sizeof(int));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Buffers
 {
@@ -13,7 +14,7 @@ namespace System.Buffers
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
         /// <returns></returns>
-        public static IBufferWriter<T> CreateBufferWriter<T>(this T[] array)
+        public static IBufferWriter<T> CreateWriter<T>(this T[] array)
         {
             return new ArrayBufferWriter<T>(array);
         }
@@ -24,7 +25,7 @@ namespace System.Buffers
         /// <typeparam name="T"></typeparam>
         /// <param name="arraySegment"></param>
         /// <returns></returns>
-        public static IBufferWriter<T> CreateBufferWriter<T>(this ArraySegment<T> arraySegment)
+        public static IBufferWriter<T> CreateWriter<T>(this ArraySegment<T> arraySegment)
         {
             return new ArrayBufferWriter<T>(arraySegment);
         }
@@ -36,7 +37,7 @@ namespace System.Buffers
         /// <param name="memory"></param>
         /// <exception cref="NotSupportedException"></exception>
         /// <returns></returns>
-        public static IBufferWriter<T> CreateBufferWriter<T>(this Memory<T> memory)
+        public static IBufferWriter<T> CreateWriter<T>(this Memory<T> memory)
         {
             return MemoryMarshal.TryGetArray<T>(memory, out var arraySegment)
                 ? new ArrayBufferWriter<T>(arraySegment)
@@ -74,32 +75,30 @@ namespace System.Buffers
 
             public Memory<T> GetMemory(int sizeHint = 0)
             {
-                var free = this.length - this.position;
-                if (sizeHint <= 0)
-                {
-                    sizeHint = free;
-                }
-                else if (sizeHint > free)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(sizeHint));
-                }
-
-                return new Memory<T>(this.array, this.position, sizeHint);
+                var size = this.GetSize(sizeHint);
+                return new Memory<T>(this.array, this.position, size);
             }
 
             public Span<T> GetSpan(int sizeHint = 0)
             {
+                var size = this.GetSize(sizeHint);
+                return new Span<T>(this.array, this.position, size);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private int GetSize(int sizeHint)
+            {
                 var free = this.length - this.position;
                 if (sizeHint <= 0)
                 {
-                    sizeHint = free;
+                    return free;
                 }
-                else if (sizeHint > free)
+
+                if (sizeHint > free)
                 {
                     throw new ArgumentOutOfRangeException(nameof(sizeHint));
                 }
-
-                return new Span<T>(this.array, this.position, sizeHint);
+                return sizeHint;
             }
         }
     }
