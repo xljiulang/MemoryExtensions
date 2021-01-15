@@ -1,6 +1,5 @@
 ﻿using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace System.Buffers
 {
@@ -189,17 +188,7 @@ namespace System.Buffers
         {
             var size = sizeof(long);
             var span = writer.GetSpan(size);
-
-            if (BitConverter.IsLittleEndian == false)
-            {
-                var tmp = BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value));
-                MemoryMarshal.Write(span, ref tmp);
-            }
-            else
-            {
-                MemoryMarshal.Write(span, ref value);
-            }
-
+            BinaryPrimitiveEx.WriteDoubleLittleEndian(span, value);
             writer.Advance(size);
         }
 
@@ -213,17 +202,7 @@ namespace System.Buffers
         {
             var size = sizeof(long);
             var span = writer.GetSpan(size);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                var tmp = BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value));
-                MemoryMarshal.Write(span, ref tmp);
-            }
-            else
-            {
-                MemoryMarshal.Write(span, ref value);
-            }
-
+            BinaryPrimitiveEx.WriteDoubleBigEndian(span, value);
             writer.Advance(size);
         }
 
@@ -234,21 +213,11 @@ namespace System.Buffers
         /// <param name="writer"></param>
         /// <param name="value"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        unsafe public static void WriteSingleLittleEndian(this IBufferWriter<byte> writer, float value)
+        public static void WriteSingleLittleEndian(this IBufferWriter<byte> writer, float value)
         {
             var size = sizeof(int);
             var span = writer.GetSpan(size);
-
-            if (BitConverter.IsLittleEndian == false)
-            {
-                var tmp = BinaryPrimitives.ReverseEndianness(SingleToInt32Bits(value));
-                MemoryMarshal.Write(span, ref tmp);
-            }
-            else
-            {
-                MemoryMarshal.Write(span, ref value);
-            }
-
+            BinaryPrimitiveEx.WriteSingleLittleEndian(span, value);
             writer.Advance(size);
         }
 
@@ -258,27 +227,12 @@ namespace System.Buffers
         /// <param name="writer"></param>
         /// <param name="value"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        unsafe public static void WriteSingleBigEndian(this IBufferWriter<byte> writer, float value)
+        public static void WriteSingleBigEndian(this IBufferWriter<byte> writer, float value)
         {
             var size = sizeof(int);
             var span = writer.GetSpan(size);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                var tmp = BinaryPrimitives.ReverseEndianness(SingleToInt32Bits(value));
-                MemoryMarshal.Write(span, ref tmp);
-            }
-            else
-            {
-                MemoryMarshal.Write(span, ref value);
-            }
-
+            BinaryPrimitiveEx.WriteSingleBigEndian(span, value);
             writer.Advance(size);
-        }
-
-        unsafe private static int SingleToInt32Bits(float value)
-        {
-            return *(int*)(&value);
         }
     }
 }
