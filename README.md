@@ -1,7 +1,7 @@
 ## MemoryExtensions 　
-High performance buffer types such as ArrayPool,IArrayOwner<T>,BufferWriter<T>,and Slice extension for IMemoryOwner<T>
+High performance buffer types such as IArrayOwner<T>,IMemoryOwner<T>,BufferWriter<T>,BufferReader<T>
 ```
-<PackageReference Include="MemoryExtensions" Version="1.0.0" />
+<PackageReference Include="MemoryExtensions" Version="1.0.1" />
 ```
 ### ArrayPool & IArrayOwner
 
