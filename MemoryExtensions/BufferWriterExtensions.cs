@@ -1,5 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Buffers
 {
@@ -8,6 +10,31 @@ namespace System.Buffers
     /// </summary>
     public static class BufferWriterExtensions
     {
+        /// <summary>
+        /// 写入字符串
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="text">字体串</param>
+        /// <param name="encoding">编码</param>
+        /// <returns>写入的字节数</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static int Write(this IBufferWriter<byte> writer, ReadOnlySpan<char> text, Encoding encoding)
+        {
+            if (text.IsEmpty)
+            {
+                return 0;
+            }
+
+            var chars = (char*)Unsafe.AsPointer(ref MemoryMarshal.GetReference(text));
+            var byteCount = encoding.GetByteCount(chars, text.Length);
+
+            var span = writer.GetSpan(byteCount);
+            var bytes = (byte*)Unsafe.AsPointer(ref span[0]);
+            var len = encoding.GetEncoder().GetBytes(chars, text.Length, bytes, byteCount, flush: true);
+            writer.Advance(len);
+            return len;
+        }
+
         /// <summary>
         /// 写入int32
         /// </summary>

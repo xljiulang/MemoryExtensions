@@ -1,5 +1,8 @@
 ﻿using System.Buffers.Binary;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Buffers
 {
@@ -38,6 +41,19 @@ namespace System.Buffers
             var value = this.span.Slice(0, count);
             this.span = this.span.Slice(count);
             return value;
+        }
+
+        /// <summary>
+        /// 读取指定长度并编码为文本
+        /// </summary>
+        /// <param name="byteCount">字节长度</param>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public unsafe string Read(int byteCount, Encoding encoding)
+        {
+            var text = this.Read(byteCount);
+            var bytes = (byte*)Unsafe.AsPointer(ref MemoryMarshal.GetReference(text));
+            return encoding.GetString(bytes, byteCount);
         }
 
         /// <summary>
