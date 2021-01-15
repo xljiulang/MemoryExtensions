@@ -11,7 +11,7 @@
 		<Authors>xljiulang</Authors>
 		<Company>xljiulang</Company>
 		<Product>xljiulang</Product>
-		<Description>High performance buffer types such as IArrayOwner&lt;T&gt;,RecyclableBufferWriter&lt;T&gt;,ResizableBufferWriter&lt;T&gt;,FixedBufferWriter&lt;T&gt;,BufferReader&lt;T&gt;</Description>
+		<Description>High performance buffer types such as IArrayOwner&lt;T&gt;, RecyclableBufferWriter&lt;T&gt;, ResizableBufferWriter&lt;T&gt;, FixedBufferWriter&lt;T&gt;, BufferReader</Description>
 		<PackageProjectUrl>https://github.com/xljiulang/MemoryExtensions</PackageProjectUrl>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
