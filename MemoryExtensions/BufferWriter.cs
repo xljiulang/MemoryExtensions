@@ -26,7 +26,7 @@ namespace System.Buffers
         /// </summary>
         /// <param name="initialCapacity">初始容量</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public BufferWriter(int initialCapacity = 1024)
+        public BufferWriter(int initialCapacity)
         {
             if (initialCapacity <= 0)
             {

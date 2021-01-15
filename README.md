@@ -3,10 +3,11 @@ High performance buffer types such as ArrayPool,IArrayOwner<T>,BufferWriter<T>,a
 ```
 <PackageReference Include="MemoryExtensions" Version="1.0.0" />
 ```
-### ArrayPool
+### ArrayPool & IArrayOwner
 
 ```
 var arrayOwner = ArrayPool.Rent<byte>(10);
+// var arrayOwner = ArrayPool<byte>.Shared.RentArrayOwner(10);
 for (var i = 0; i < arrayOwner.Length; i++)
 {
     arrayOwner.Array[i] = (byte)i;
@@ -16,7 +17,7 @@ for (var i = 0; i < arrayOwner.Length; i++)
 arrayOwner.Dispose();
 ```
  
-### BufferWriter
+### Recyclable BufferWriter
 
 ```
 var writer = new BufferWriter<byte>(4);
@@ -29,7 +30,7 @@ var writtern = writer.GetWrittenSpan(); // 1,2,3,4,127,255,255,255
 writer.Dispose();
 ``` 
 
-### BufferReader
+### BufferWriter & BufferReader
 ```
 var array = new byte[16];
 

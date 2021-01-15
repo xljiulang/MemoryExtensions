@@ -1,4 +1,4 @@
-﻿namespace System
+﻿namespace System.Buffers
 {
     /// <summary>
     /// 表示可回收对象的抽象基础类
