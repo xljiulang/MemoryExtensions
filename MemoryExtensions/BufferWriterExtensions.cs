@@ -241,7 +241,7 @@ namespace System.Buffers
 
             if (BitConverter.IsLittleEndian == false)
             {
-                var tmp = BinaryPrimitives.ReverseEndianness(*(int*)(&value));
+                var tmp = BinaryPrimitives.ReverseEndianness(SingleToInt32Bits(value));
                 MemoryMarshal.Write(span, ref tmp);
             }
             else
@@ -265,7 +265,7 @@ namespace System.Buffers
 
             if (BitConverter.IsLittleEndian)
             {
-                var tmp = BinaryPrimitives.ReverseEndianness(*(int*)(&value));
+                var tmp = BinaryPrimitives.ReverseEndianness(SingleToInt32Bits(value));
                 MemoryMarshal.Write(span, ref tmp);
             }
             else
@@ -274,6 +274,11 @@ namespace System.Buffers
             }
 
             writer.Advance(size);
+        }
+
+        unsafe private static int SingleToInt32Bits(float value)
+        {
+            return *(int*)(&value);
         }
     }
 }
