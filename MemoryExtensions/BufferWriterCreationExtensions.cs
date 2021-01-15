@@ -17,7 +17,7 @@ namespace System.Buffers
         /// <returns></returns>
         public static IBufferWriter<T> CreateWriter<T>(this T[] array)
         {
-            return new ArrayBufferWriter<T>(array);
+            return new FixedArrayBufferWriter<T>(array);
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace System.Buffers
         /// <returns></returns>
         public static IBufferWriter<T> CreateWriter<T>(this ArraySegment<T> arraySegment)
         {
-            return new ArrayBufferWriter<T>(arraySegment);
+            return new FixedArrayBufferWriter<T>(arraySegment);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace System.Buffers
         public static IBufferWriter<T> CreateWriter<T>(this Memory<T> memory)
         {
             return MemoryMarshal.TryGetArray<T>(memory, out var arraySegment)
-                ? new ArrayBufferWriter<T>(arraySegment)
+                ? new FixedArrayBufferWriter<T>(arraySegment)
                 : throw new NotSupportedException();
         }
 
@@ -50,20 +50,20 @@ namespace System.Buffers
         /// </summary>
         /// <typeparam name="T"></typeparam>
         [DebuggerDisplay("WrittenCount = {index}")]
-        private struct ArrayBufferWriter<T> : IBufferWriter<T>
+        private struct FixedArrayBufferWriter<T> : IBufferWriter<T>
         {
             private int index;
             private readonly T[] array;
             private readonly int length;
 
-            public ArrayBufferWriter(T[] array)
+            public FixedArrayBufferWriter(T[] array)
             {
                 this.index = 0;
                 this.array = array;
                 this.length = array.Length;
             }
 
-            public ArrayBufferWriter(ArraySegment<T> arraySegment)
+            public FixedArrayBufferWriter(ArraySegment<T> arraySegment)
             {
                 this.index = arraySegment.Offset;
                 this.array = arraySegment.Array;
