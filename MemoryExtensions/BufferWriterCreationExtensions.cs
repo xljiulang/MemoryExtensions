@@ -48,7 +48,7 @@ namespace System.Buffers
         /// 数组缓冲区的BufferWriter
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class ArrayBufferWriter<T> : IBufferWriter<T>
+        private struct ArrayBufferWriter<T> : IBufferWriter<T>
         {
             private int position;
             private readonly T[] array;
