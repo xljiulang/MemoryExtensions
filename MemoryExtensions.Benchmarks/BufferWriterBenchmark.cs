@@ -1,59 +1,52 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System.Buffers;
-using System.IO;
 
 namespace MemoryExtensions.Benchmarks
 {
     [MemoryDiagnoser]
     public class BufferWriterBenchmark : IBenchmark
     {
-        [Params(4, 8)]
-        public int Fields { get; set; }
+        private byte[] filedValue;
 
-        [Params(4, 64, 128)]
-        public int FieldSize { get; set; }
+        [Params(4, 8, 16)]
+        public int WriteCount { get; set; }
+
+        [Params(4, 64, 128, 512)]
+        public int WritePerSize { get; set; }
+
+        [IterationSetup]
+        public void Setup()
+        {
+            this.filedValue = new byte[this.WritePerSize];
+        }
 
         [Benchmark]
         public void RecyclableBufferWriter()
         {
-            using var writer = new RecyclableBufferWriter<byte>(16);
-            var filed = new byte[FieldSize];
-            for (var i = 0; i < Fields; i++)
+            using var writer = new RecyclableBufferWriter<byte>(WritePerSize);
+            for (var i = 0; i < WriteCount; i++)
             {
-                writer.Write(filed);
-            }
-        }
-
-        [Benchmark]
-        public void FixedBufferWriter()
-        {
-            var writer = new byte[Fields * FieldSize].CreateWriter();
-            var filed = new byte[FieldSize];
-            for (var i = 0; i < Fields; i++)
-            {
-                writer.Write(filed);
+                writer.Write(this.filedValue);
             }
         }
 
         [Benchmark]
         public void ResizableBufferWriter()
         {
-            var writer = new ResizableBufferWriter<byte>(16);
-            var filed = new byte[FieldSize];
-            for (var i = 0; i < Fields; i++)
+            var writer = new ResizableBufferWriter<byte>(WritePerSize);
+            for (var i = 0; i < WriteCount; i++)
             {
-                writer.Write(filed);
+                writer.Write(this.filedValue);
             }
         }
 
         [Benchmark]
-        public void MemoryStream()
+        public void FixedBufferWriter()
         {
-            using var writer = new MemoryStream();
-            var filed = new byte[FieldSize];
-            for (var i = 0; i < Fields; i++)
+            var writer = new byte[WriteCount * WritePerSize].CreateWriter();
+            for (var i = 0; i < WriteCount; i++)
             {
-                writer.Write(filed);
+                writer.Write(this.filedValue);
             }
         }
     }

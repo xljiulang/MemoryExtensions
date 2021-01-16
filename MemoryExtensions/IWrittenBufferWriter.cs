@@ -1,10 +1,10 @@
 ﻿namespace System.Buffers
 {
     /// <summary>
-    /// 定义获取BufferWriter的数据
+    /// 定义支持获取已写入数据的BufferWriter
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IBufferWritten<T> 
+    public interface IWrittenBufferWriter<T> : IBufferWriter<T>
     {
         /// <summary>
         /// 获取已数入的数据长度

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace System.Buffers
 {
@@ -7,29 +8,13 @@ namespace System.Buffers
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [DebuggerDisplay("WrittenCount = {index}")]
-    public sealed class ResizableBufferWriter<T> : IBufferWriter<T>, IBufferWritten<T>
+    public sealed class ResizableBufferWriter<T> : IWrittenBufferWriter<T>
     {
         private const int maxArrayLength = 0X7FEFFFFF;
         private const int defaultSizeHint = 256;
 
         private int index;
         private T[] buffer;
-
-        /// <summary>
-        /// 自动扩容的BufferWriter
-        /// </summary>
-        /// <param name="initialCapacity">初始容量</param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public ResizableBufferWriter(int initialCapacity)
-        {
-            if (initialCapacity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(initialCapacity));
-            }
-
-            this.buffer = new T[initialCapacity];
-            this.index = 0;
-        }
 
         /// <summary>
         /// 获取已数入的数据长度
@@ -61,6 +46,22 @@ namespace System.Buffers
         /// 获取剩余容量
         /// </summary>
         public int FreeCapacity => this.buffer.Length - this.index;
+
+        /// <summary>
+        /// 自动扩容的BufferWriter
+        /// </summary>
+        /// <param name="initialCapacity">初始容量</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public ResizableBufferWriter(int initialCapacity)
+        {
+            if (initialCapacity <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(initialCapacity));
+            }
+
+            this.buffer = new T[initialCapacity];
+            this.index = 0;
+        }
 
         /// <summary>
         /// 清除数据
@@ -139,6 +140,7 @@ namespace System.Buffers
         /// 检测和扩容
         /// </summary>
         /// <param name="sizeHint"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckAndResizeBuffer(int sizeHint)
         {
             if (sizeHint < 0)

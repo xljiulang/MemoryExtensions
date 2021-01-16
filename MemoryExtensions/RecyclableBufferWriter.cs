@@ -7,7 +7,7 @@ namespace System.Buffers
     /// 表示可回收的自动扩容BufferWriter
     /// </summary>
     [DebuggerDisplay("WrittenCount = {index}")]
-    public sealed class RecyclableBufferWriter<T> : Recyclable, IBufferWriter<T>, IBufferWritten<T>
+    public sealed class RecyclableBufferWriter<T> : Recyclable, IWrittenBufferWriter<T>
     {
         private int index = 0;
         private IArrayOwner<T> buffer;

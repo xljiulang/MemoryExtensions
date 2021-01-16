@@ -32,6 +32,15 @@ namespace System.Buffers
         }
 
         /// <summary>
+        /// Buffter读取器
+        /// </summary>
+        /// <param name="arraySegment"></param>
+        public BufferReader(ArraySegment<byte> arraySegment)
+        {
+            this.span = new ReadOnlySpan<byte>(arraySegment.Array, arraySegment.Offset, arraySegment.Count);
+        }
+
+        /// <summary>
         /// 读取指定长度
         /// </summary>
         /// <param name="count"></param>

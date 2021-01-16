@@ -15,7 +15,7 @@ namespace System.Buffers
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
         /// <returns></returns>
-        public static IBufferWriter<T> CreateWriter<T>(this T[] array)
+        public static IWrittenBufferWriter<T> CreateWriter<T>(this T[] array)
         {
             return new FixedBufferWriter<T>(array);
         }
@@ -26,7 +26,7 @@ namespace System.Buffers
         /// <typeparam name="T"></typeparam>
         /// <param name="arraySegment"></param>
         /// <returns></returns>
-        public static IBufferWriter<T> CreateWriter<T>(this ArraySegment<T> arraySegment)
+        public static IWrittenBufferWriter<T> CreateWriter<T>(this ArraySegment<T> arraySegment)
         {
             return new FixedBufferWriter<T>(arraySegment);
         }
@@ -38,7 +38,7 @@ namespace System.Buffers
         /// <param name="memory"></param>
         /// <exception cref="NotSupportedException"></exception>
         /// <returns></returns>
-        public static IBufferWriter<T> CreateWriter<T>(this Memory<T> memory)
+        public static IWrittenBufferWriter<T> CreateWriter<T>(this Memory<T> memory)
         {
             return MemoryMarshal.TryGetArray<T>(memory, out var arraySegment)
                 ? new FixedBufferWriter<T>(arraySegment)
@@ -50,23 +50,44 @@ namespace System.Buffers
         /// </summary>
         /// <typeparam name="T"></typeparam>
         [DebuggerDisplay("WrittenCount = {index}")]
-        private struct FixedBufferWriter<T> : IBufferWriter<T>
+        private struct FixedBufferWriter<T> : IWrittenBufferWriter<T>
         {
             private int index;
-            private readonly T[] array;
+            private readonly T[] buffer;
             private readonly int length;
 
-            public FixedBufferWriter(T[] array)
+            /// <summary>
+            /// 获取已数入的数据长度
+            /// </summary>
+            public int WrittenCount => this.index;
+
+            /// <summary>
+            /// 获取已数入的数据
+            /// </summary>
+            public ReadOnlySpan<T> WrittenSpan => this.buffer.AsSpan(0, index);
+
+            /// <summary>
+            /// 获取已数入的数据
+            /// </summary>
+            public ReadOnlyMemory<T> WrittenMemory => this.buffer.AsMemory(0, index);
+
+            /// <summary>
+            /// 获取已数入的数据
+            /// </summary>
+            /// <returns></returns>
+            public ArraySegment<T> WrittenSegment => new ArraySegment<T>(this.buffer, 0, this.index);
+
+            public FixedBufferWriter(T[] buffer)
             {
                 this.index = 0;
-                this.array = array;
-                this.length = array.Length;
+                this.buffer = buffer;
+                this.length = buffer.Length;
             }
 
             public FixedBufferWriter(ArraySegment<T> arraySegment)
             {
                 this.index = arraySegment.Offset;
-                this.array = arraySegment.Array;
+                this.buffer = arraySegment.Array;
                 this.length = arraySegment.Count;
             }
 
@@ -78,13 +99,13 @@ namespace System.Buffers
             public Memory<T> GetMemory(int sizeHint = 0)
             {
                 var size = this.GetSize(sizeHint);
-                return new Memory<T>(this.array, this.index, size);
+                return new Memory<T>(this.buffer, this.index, size);
             }
 
             public Span<T> GetSpan(int sizeHint = 0)
             {
                 var size = this.GetSize(sizeHint);
-                return new Span<T>(this.array, this.index, size);
+                return new Span<T>(this.buffer, this.index, size);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
