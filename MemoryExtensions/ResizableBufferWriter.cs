@@ -13,7 +13,7 @@ namespace System.Buffers
         private const int maxArrayLength = 0X7FEFFFFF;
         private const int defaultSizeHint = 256;
 
-        private int index;
+        private int index = 0;
         private T[] buffer;
 
         /// <summary>
@@ -60,7 +60,6 @@ namespace System.Buffers
             }
 
             this.buffer = new T[initialCapacity];
-            this.index = 0;
         }
 
         /// <summary>
@@ -96,7 +95,7 @@ namespace System.Buffers
         /// <returns></returns>
         public Memory<T> GetMemory(int sizeHint = 0)
         {
-            CheckAndResizeBuffer(sizeHint);
+            this.CheckAndResizeBuffer(sizeHint);
             return this.buffer.AsMemory(this.index);
         }
 
@@ -109,7 +108,7 @@ namespace System.Buffers
         /// <returns></returns>
         public Span<T> GetSpan(int sizeHint = 0)
         {
-            CheckAndResizeBuffer(sizeHint);
+            this.CheckAndResizeBuffer(sizeHint);
             return this.buffer.AsSpan(this.index);
         }
 
