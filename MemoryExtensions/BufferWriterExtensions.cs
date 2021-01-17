@@ -10,11 +10,54 @@ namespace System.Buffers
     /// </summary>
     public static class BufferWriterExtensions
     {
+        private const byte CR = (byte)'\r';
+        private const byte LF = (byte)'\n';
+
+        /// <summary>
+        /// 写入\r
+        /// </summary>
+        /// <param name="writer"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void WriteCR(this IBufferWriter<byte> writer)
+        {
+            const int size = 1;
+            var span = writer.GetSpan(size);
+            span[0] = CR;
+            writer.Advance(size);
+        }
+
+        /// <summary>
+        /// 写入\n
+        /// </summary>
+        /// <param name="writer"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void WriteLF(this IBufferWriter<byte> writer)
+        {
+            const int size = 1;
+            var span = writer.GetSpan(size);
+            span[0] = LF;
+            writer.Advance(size);
+        }
+
+        /// <summary>
+        /// 写入\r\n
+        /// </summary>
+        /// <param name="writer"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void WriteCRLF(this IBufferWriter<byte> writer)
+        {
+            const int size = 2;
+            var span = writer.GetSpan(size);
+            span[0] = CR;
+            span[1] = LF;
+            writer.Advance(size);
+        }
+
         /// <summary>
         /// 写入字符串
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="text">字体串</param>
+        /// <param name="text">字符串</param>
         /// <param name="encoding">编码</param>
         /// <returns>写入的字节数</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -43,7 +86,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, int value)
         {
-            var size = sizeof(int);
+            const int size = sizeof(int);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteInt32BigEndian(span, value);
             writer.Advance(size);
@@ -57,7 +100,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, int value)
         {
-            var size = sizeof(int);
+            const int size = sizeof(int);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteInt32LittleEndian(span, value);
             writer.Advance(size);
@@ -71,7 +114,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, short value)
         {
-            var size = sizeof(short);
+            const int size = sizeof(short);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteInt16BigEndian(span, value);
             writer.Advance(size);
@@ -85,7 +128,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, short value)
         {
-            var size = sizeof(short);
+            const int size = sizeof(short);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteInt16LittleEndian(span, value);
             writer.Advance(size);
@@ -99,7 +142,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, long value)
         {
-            var size = sizeof(long);
+            const int size = sizeof(long);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteInt64BigEndian(span, value);
             writer.Advance(size);
@@ -113,7 +156,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, long value)
         {
-            var size = sizeof(long);
+            const int size = sizeof(long);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteInt64LittleEndian(span, value);
             writer.Advance(size);
@@ -129,7 +172,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, uint value)
         {
-            var size = sizeof(uint);
+            const int size = sizeof(uint);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteUInt32BigEndian(span, value);
             writer.Advance(size);
@@ -143,7 +186,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, uint value)
         {
-            var size = sizeof(uint);
+            const int size = sizeof(uint);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteUInt32LittleEndian(span, value);
             writer.Advance(size);
@@ -157,7 +200,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, ushort value)
         {
-            var size = sizeof(ushort);
+            const int size = sizeof(ushort);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteUInt16BigEndian(span, value);
             writer.Advance(size);
@@ -171,7 +214,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, ushort value)
         {
-            var size = sizeof(ushort);
+            const int size = sizeof(ushort);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteUInt16LittleEndian(span, value);
             writer.Advance(size);
@@ -185,7 +228,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, ulong value)
         {
-            var size = sizeof(ulong);
+            const int size = sizeof(ulong);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteUInt64BigEndian(span, value);
             writer.Advance(size);
@@ -199,7 +242,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, ulong value)
         {
-            var size = sizeof(ulong);
+            const int size = sizeof(ulong);
             var span = writer.GetSpan(size);
             BinaryPrimitives.WriteUInt64LittleEndian(span, value);
             writer.Advance(size);
@@ -213,7 +256,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, double value)
         {
-            var size = sizeof(long);
+            const int size = sizeof(long);
             var span = writer.GetSpan(size);
             BinaryPrimitiveEx.WriteDoubleLittleEndian(span, value);
             writer.Advance(size);
@@ -227,7 +270,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, double value)
         {
-            var size = sizeof(long);
+            const int size = sizeof(long);
             var span = writer.GetSpan(size);
             BinaryPrimitiveEx.WriteDoubleBigEndian(span, value);
             writer.Advance(size);
@@ -242,7 +285,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLittleEndian(this IBufferWriter<byte> writer, float value)
         {
-            var size = sizeof(int);
+            const int size = sizeof(int);
             var span = writer.GetSpan(size);
             BinaryPrimitiveEx.WriteSingleLittleEndian(span, value);
             writer.Advance(size);
@@ -256,7 +299,7 @@ namespace System.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBigEndian(this IBufferWriter<byte> writer, float value)
         {
-            var size = sizeof(int);
+            const int size = sizeof(int);
             var span = writer.GetSpan(size);
             BinaryPrimitiveEx.WriteSingleBigEndian(span, value);
             writer.Advance(size);
