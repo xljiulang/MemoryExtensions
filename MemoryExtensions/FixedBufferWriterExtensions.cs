@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
-namespace System.Buffers
+﻿namespace System.Buffers
 {
     /// <summary>
     /// 提供固定大小的BufferWriter的创建扩展
@@ -15,9 +11,9 @@ namespace System.Buffers
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
         /// <returns></returns>
-        public static IWrittenBufferWriter<T> CreateWriter<T>(this T[] array)
+        public static IBufferWriter<T> CreateWriter<T>(this T[] array)
         {
-            return new FixedBufferWriter<T>(array);
+            return array.AsMemory().CreateWriter();
         }
 
         /// <summary>
@@ -26,9 +22,9 @@ namespace System.Buffers
         /// <typeparam name="T"></typeparam>
         /// <param name="arraySegment"></param>
         /// <returns></returns>
-        public static IWrittenBufferWriter<T> CreateWriter<T>(this ArraySegment<T> arraySegment)
+        public static IBufferWriter<T> CreateWriter<T>(this ArraySegment<T> arraySegment)
         {
-            return new FixedBufferWriter<T>(arraySegment);
+            return arraySegment.AsMemory().CreateWriter();
         }
 
         /// <summary>
@@ -36,92 +32,46 @@ namespace System.Buffers
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="memory"></param>
-        /// <exception cref="NotSupportedException"></exception>
         /// <returns></returns>
-        public static IWrittenBufferWriter<T> CreateWriter<T>(this Memory<T> memory)
+        public static IBufferWriter<T> CreateWriter<T>(this Memory<T> memory)
         {
-            return MemoryMarshal.TryGetArray<T>(memory, out var arraySegment)
-                ? new FixedBufferWriter<T>(arraySegment)
-                : throw new NotSupportedException();
+            return new FixedBufferWriter<T>(memory);
         }
 
         /// <summary>
         /// 表示固定大小的BufferWriter
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        [DebuggerDisplay("WrittenCount = {index}")]
-        private struct FixedBufferWriter<T> : IWrittenBufferWriter<T>
+        private struct FixedBufferWriter<T> : IBufferWriter<T>
         {
-            private int index;
-            private readonly T[] buffer;
-            private readonly int length;
+            private Memory<T> buffer;
 
-            /// <summary>
-            /// 获取已数入的数据长度
-            /// </summary>
-            public int WrittenCount => this.index;
-
-            /// <summary>
-            /// 获取已数入的数据
-            /// </summary>
-            public ReadOnlySpan<T> WrittenSpan => this.buffer.AsSpan(0, index);
-
-            /// <summary>
-            /// 获取已数入的数据
-            /// </summary>
-            public ReadOnlyMemory<T> WrittenMemory => this.buffer.AsMemory(0, index);
-
-            /// <summary>
-            /// 获取已数入的数据
-            /// </summary>
-            /// <returns></returns>
-            public ArraySegment<T> WrittenSegment => new ArraySegment<T>(this.buffer, 0, this.index);
-
-            public FixedBufferWriter(T[] buffer)
+            public FixedBufferWriter(Memory<T> buffer)
             {
-                this.index = 0;
                 this.buffer = buffer;
-                this.length = buffer.Length;
-            }
-
-            public FixedBufferWriter(ArraySegment<T> arraySegment)
-            {
-                this.index = arraySegment.Offset;
-                this.buffer = arraySegment.Array;
-                this.length = arraySegment.Count;
             }
 
             public void Advance(int count)
             {
-                this.index += count;
-            }
-
-            public Memory<T> GetMemory(int sizeHint = 0)
-            {
-                var size = this.GetSize(sizeHint);
-                return new Memory<T>(this.buffer, this.index, size);
+                if (count < 0 || count > this.buffer.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(count));
+                }
+                this.buffer = this.buffer.Slice(count);
             }
 
             public Span<T> GetSpan(int sizeHint = 0)
             {
-                var size = this.GetSize(sizeHint);
-                return new Span<T>(this.buffer, this.index, size);
+                return this.GetMemory(sizeHint).Span;
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private int GetSize(int sizeHint)
+            public Memory<T> GetMemory(int sizeHint = 0)
             {
-                var free = this.length - this.index;
-                if (sizeHint <= 0)
-                {
-                    return free;
-                }
-
-                if (sizeHint > free)
+                if (sizeHint > this.buffer.Length)
                 {
                     throw new ArgumentOutOfRangeException(nameof(sizeHint));
                 }
-                return sizeHint;
+                return this.buffer;
             }
         }
     }

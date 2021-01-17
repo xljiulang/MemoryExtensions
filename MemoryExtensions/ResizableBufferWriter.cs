@@ -7,7 +7,7 @@ namespace System.Buffers
     /// 表示自动扩容的BufferWriter
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [DebuggerDisplay("WrittenCount = {index}")]
+    [DebuggerDisplay("WrittenCount = {WrittenCount}")]
     public sealed class ResizableBufferWriter<T> : IWrittenBufferWriter<T>
     {
         private const int maxArrayLength = 0X7FEFFFFF;

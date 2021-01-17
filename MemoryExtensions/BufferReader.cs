@@ -37,7 +37,7 @@ namespace System.Buffers
         /// <param name="arraySegment"></param>
         public BufferReader(ArraySegment<byte> arraySegment)
         {
-            this.span = new ReadOnlySpan<byte>(arraySegment.Array, arraySegment.Offset, arraySegment.Count);
+            this.span = arraySegment.AsSpan();
         }
 
         /// <summary>

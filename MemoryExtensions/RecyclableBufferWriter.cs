@@ -6,7 +6,7 @@ namespace System.Buffers
     /// <summary>
     /// 表示可回收的自动扩容BufferWriter
     /// </summary>
-    [DebuggerDisplay("WrittenCount = {index}")]
+    [DebuggerDisplay("WrittenCount = {WrittenCount}")]
     public sealed class RecyclableBufferWriter<T> : Recyclable, IWrittenBufferWriter<T>
     {
         private int index = 0;
