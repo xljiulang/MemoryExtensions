@@ -1,7 +1,7 @@
 ## MemoryExtensions 　
-High performance buffer types such as `IArrayOwner<T>`, `RecyclableBufferWriter<T>`, `ResizableBufferWriter<T>`, `FixedBufferWriter<T>`, `BufferReader`
+High performance buffer types such as `IArrayOwner<T>`, `RecyclableBufferWriter<T>`, `ResizableBufferWriter<T>`, `MemoryBufferWriter<T>`, `BufferReader`
 ```
-<PackageReference Include="MemoryExtensions" Version="1.0.2" />
+<PackageReference Include="MemoryExtensions" Version="1.0.3" />
 ```
 ### ArrayPool & IArrayOwner
 
@@ -40,11 +40,12 @@ writer.WriteBigEndian(int.MaxValue);
 var writtern = writer.WrittenSpan; // 1,2,3,4,127,255,255,255
 ``` 
 
-### FixedBufferWriter & BufferReader
+### MemoryBufferWriter & BufferReader
 ```
 var array = new byte[16];
 
 var writer = array.CreateWriter();
+// var writer = new MemoryBufferWriter(array);
 writer.WriteBigEndian(18);
 writer.WriteBigEndian(2.01f);
 

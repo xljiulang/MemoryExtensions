@@ -41,9 +41,10 @@ namespace MemoryExtensions.Benchmarks
         }
 
         [Benchmark]
-        public void FixedBufferWriter()
+        public void MemoryBufferWriter()
         {
-            var writer = new byte[WriteCount * WritePerSize].CreateWriter();
+            var array = new byte[WriteCount * WritePerSize];
+            var writer = new MemoryBufferWriter<byte>(array);
             for (var i = 0; i < WriteCount; i++)
             {
                 writer.Write(this.filedValue);
